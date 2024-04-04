@@ -50,6 +50,8 @@
         var context = canvas.getContext('2d');
 
         var id = 11;
+        var lastX = null;
+        var lastY = null;
 
         var width = 71;
         var height = 96;
@@ -100,7 +102,20 @@
         }
         document.addEventListener('pointermove', function (event) {
             if (event.pressure === 0) return;
-            throwCard(event.clientX * dpr, event.clientY * dpr);
+            if (lastX === null || lastY === null) {
+                lastX = event.clientX;
+                lastY = event.clientY;
+                return;
+            }
+            const dx = event.clientX - lastX;
+            const dy = event.clientY - lastY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance >= 30) {
+                console.log(`dx: ${dx}, dy: ${dy}, distance: ${distance}`);
+                throwCard(event.clientX * dpr, event.clientY * dpr);
+                lastX = event.clientX;
+                lastY = event.clientY;
+            }
         });
         document.addEventListener('pointerdown', function (event) {
             throwCard(event.clientX * dpr, event.clientY * dpr);
